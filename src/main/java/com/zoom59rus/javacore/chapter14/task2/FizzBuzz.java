@@ -37,6 +37,7 @@ public class FizzBuzz {
         if(a.get() && !b.get()){
             if(numbers.size() == 1){
                 System.out.print("fizz");
+                cdl.countDown();
                 return;
             }else System.out.print("fizz, ");
 
@@ -47,6 +48,7 @@ public class FizzBuzz {
             }
             a.set(false);
             b.set(false);
+            cdl.countDown();
             semaphoreB.release();
             fizz();
         }
@@ -73,6 +75,7 @@ public class FizzBuzz {
             if(!a.get()){
                 if(numbers.size() == 1){
                     System.out.print("buzz");
+                    cdl.countDown();
                     return;
                 }else System.out.print("buzz, ");
                 try {
@@ -82,6 +85,7 @@ public class FizzBuzz {
                 }
                 a.set(false);
                 b.set(false);
+                cdl.countDown();
                 semaphoreA.release();
                 buzz();
             }

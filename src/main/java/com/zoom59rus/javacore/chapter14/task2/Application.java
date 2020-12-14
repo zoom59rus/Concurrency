@@ -21,12 +21,11 @@ public class Application {
 
         try {
             cdl.await();
-            es.shutdown();
-            System.exit(0);
         } catch (InterruptedException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
 
+        es.shutdown();
     }
 }
