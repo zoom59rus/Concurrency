@@ -2,31 +2,34 @@ package main.java.com.zoom59rus.javacore.chapter14.task2;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FizzBuzz {
     private BlockingQueue<Integer> numbers;
+    private CountDownLatch cdl;
     private AtomicBoolean a;
     private AtomicBoolean b;
 
-    private Semaphore threadA = new Semaphore(1);
-    private Semaphore threadB = new Semaphore(0);
-    private Semaphore threadC = new Semaphore(0);
-    private Semaphore threadD = new Semaphore(0);
+    private Semaphore semaphoreA = new Semaphore(1);
+    private Semaphore semaphoreB = new Semaphore(0);
+    private Semaphore semaphoreC = new Semaphore(0);
+    private Semaphore semaphoreD = new Semaphore(0);
 
-    public FizzBuzz(int n) {
+    public FizzBuzz(int n, CountDownLatch cdl) {
         this.numbers = new ArrayBlockingQueue<>(n);
         for (int i = 1; i <= n; ) {
             numbers.add(i++);
         }
         this.a = new AtomicBoolean(false);
         this.b = new AtomicBoolean(false);
+        this.cdl = cdl;
     }
 
     public void fizz() {
         try {
-            threadA.acquire();
+            semaphoreA.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -44,7 +47,7 @@ public class FizzBuzz {
             }
             a.set(false);
             b.set(false);
-            threadB.release();
+            semaphoreB.release();
             fizz();
         }
 
@@ -53,14 +56,14 @@ public class FizzBuzz {
         }else {
             a = new AtomicBoolean(false);
         }
-        threadB.release();
+        semaphoreB.release();
         fizz();
     }
 
 
     public void buzz() {
         try {
-            threadB.acquire();
+            semaphoreB.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -79,23 +82,23 @@ public class FizzBuzz {
                 }
                 a.set(false);
                 b.set(false);
-                threadA.release();
+                semaphoreA.release();
                 buzz();
             }
-            threadC.release();
+            semaphoreC.release();
             buzz();
         }else if (!a.get()){
-            threadD.release();
+            semaphoreD.release();
             buzz();
         }else {
-            threadA.release();
+            semaphoreA.release();
             buzz();
         }
     }
 
     public void fizzbuzz() {
         try {
-            threadC.acquire();
+            semaphoreC.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -110,13 +113,13 @@ public class FizzBuzz {
         }
         a.set(false);
         b.set(false);
-        threadA.release();
+        semaphoreA.release();
         fizzbuzz();
     }
 
     public void number() {
         try {
-            threadD.acquire();
+            semaphoreD.acquire();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -131,7 +134,7 @@ public class FizzBuzz {
         }
         a.set(false);
         b.set(false);
-        threadA.release();
+        semaphoreA.release();
         number();
     }
 }

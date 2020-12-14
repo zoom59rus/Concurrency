@@ -1,45 +1,32 @@
 package main.java.com.zoom59rus.javacore.chapter14.task1;
 
+import java.util.concurrent.Semaphore;
+
 public class Foo {
-    int count = 1;
+    Semaphore semaphoreA = new Semaphore(0);
+    Semaphore semaphoreB = new Semaphore(0);
 
     synchronized public void first() {
-        //Почему не корректно работает через if else?
-        while (count != 1) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
         System.out.print("first");
-        count++;
-        notifyAll();
+        semaphoreA.release();
     }
 
     synchronized public void second() {
-        while (count != 2) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            semaphoreA.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         System.out.print("second");
-        count++;
-        notifyAll();
+        semaphoreB.release();
     }
 
     synchronized public void third() {
-        while (count != 3) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            semaphoreB.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         System.out.print("third");
-        count++;
-        notifyAll();
     }
 }
